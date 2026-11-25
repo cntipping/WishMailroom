@@ -110,3 +110,18 @@ dialog.addEventListener("close", () => {
 dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
+
+const link = new URLSearchParams(location.hash.slice(1));
+const mailboxName = link.get("mailbox");
+const linkKey = link.get("key");
+if (mailboxName && linkKey) {
+  history.replaceState(history.state, "", location.pathname + location.search);
+  const door = Array.from(cabinet.querySelectorAll("button.mailbox"))
+    .find(button => button.querySelector(".plate").textContent === mailboxName);
+  if (door && /^[a-f0-9]{32}$/i.test(linkKey)) {
+    door.click();
+    key.value = linkKey;
+    keyForm.requestSubmit();
+    key.value = "";
+  }
+}
