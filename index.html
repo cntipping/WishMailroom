@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A little mailroom for the friends who filled the wish box.">
+  <meta name="theme-color" content="#39131a">
+  <title>The Wish Mailroom</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./letters.js"></script>
+  <script defer src="./mailroom.js"></script>
+</head>
+<body>
+  <main aria-label="The Wish Mailroom">
+    <div class="cabinet" id="mailboxes"></div>
+  </main>
+  <dialog id="letter" aria-labelledby="recipient">
+    <div class="paper">
+      <form method="dialog"><button class="close" aria-label="Close mailbox">×</button></form>
+      <h2 id="recipient"></h2>
+      <form id="key-form">
+        <label for="key">Mailbox key</label>
+        <div class="key-controls">
+          <input id="key" type="password" autocomplete="off" maxlength="32" autocapitalize="off" spellcheck="false"
+            aria-describedby="key-error" required autofocus>
+          <button type="submit">Unlock</button>
+        </div>
+        <p id="key-error" aria-live="polite"></p>
+      </form>
+      <div class="letter-content" id="letter-content" hidden>
+        <div id="message"></div>
+        <figure class="polaroid" id="polaroid" hidden>
+          <img id="letter-photo" alt="">
+        </figure>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
