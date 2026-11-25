@@ -10,6 +10,7 @@ const key = document.querySelector("#key");
 const keyError = document.querySelector("#key-error");
 let openDoor;
 let selectedLetter;
+let mailboxAccess;
 
 const doorFace = '<span class="face" aria-hidden="true"><span class="knob"></span><span class="plate"></span></span>';
 
@@ -28,6 +29,11 @@ for (const letter of letters) {
     dialog.showModal();
     key.focus();
     dialog.scrollTop = 0;
+    if (mailboxAccess?.name === letter.name) {
+      key.value = mailboxAccess.key;
+      keyForm.requestSubmit();
+      key.value = "";
+    }
   });
   cabinet.append(door);
 }
@@ -118,23 +124,8 @@ function openMailboxLink() {
   if (!mailboxName || !/^[a-f0-9]{32}$/i.test(linkKey ?? "")) return;
 
   history.replaceState(history.state, "", location.pathname + location.search);
-  const door = Array.from(cabinet.querySelectorAll("button.mailbox"))
-    .find(button => button.querySelector(".plate").textContent === mailboxName);
-  if (!door) return;
-
-  if (dialog.open) {
-    dialog.addEventListener("close", () => submitMailboxLink(door, linkKey), { once: true });
-    dialog.close();
-    return;
-  }
-  submitMailboxLink(door, linkKey);
-}
-
-function submitMailboxLink(door, linkKey) {
-  door.click();
-  key.value = linkKey;
-  keyForm.requestSubmit();
-  key.value = "";
+  mailboxAccess = { name: mailboxName, key: linkKey };
+  if (dialog.open) dialog.close();
 }
 
 window.addEventListener("hashchange", openMailboxLink);
