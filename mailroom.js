@@ -111,17 +111,31 @@ dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
 
-const link = new URLSearchParams(location.hash.slice(1));
-const mailboxName = link.get("mailbox");
-const linkKey = link.get("key");
-if (mailboxName && linkKey) {
+function openMailboxLink() {
+  const link = new URLSearchParams(location.hash.slice(1));
+  const mailboxName = link.get("mailbox");
+  const linkKey = link.get("key");
+  if (!mailboxName || !/^[a-f0-9]{32}$/i.test(linkKey ?? "")) return;
+
   history.replaceState(history.state, "", location.pathname + location.search);
   const door = Array.from(cabinet.querySelectorAll("button.mailbox"))
     .find(button => button.querySelector(".plate").textContent === mailboxName);
-  if (door && /^[a-f0-9]{32}$/i.test(linkKey)) {
-    door.click();
-    key.value = linkKey;
-    keyForm.requestSubmit();
-    key.value = "";
+  if (!door) return;
+
+  if (dialog.open) {
+    dialog.addEventListener("close", () => submitMailboxLink(door, linkKey), { once: true });
+    dialog.close();
+    return;
   }
+  submitMailboxLink(door, linkKey);
 }
+
+function submitMailboxLink(door, linkKey) {
+  door.click();
+  key.value = linkKey;
+  keyForm.requestSubmit();
+  key.value = "";
+}
+
+window.addEventListener("hashchange", openMailboxLink);
+openMailboxLink();
